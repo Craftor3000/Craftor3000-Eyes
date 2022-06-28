@@ -21,7 +21,7 @@ Client.player = new Player(Client, {
     }
 });
 
-Client.login("OTgxOTg0MDczNzQ2NjI4Njc5.Gz2H4i.zkeGzeHolbo2YzPN0zOKuiwzEaFSYUR8XOG7I8");
+Client.login(process.env.TOKEN);
 
 var connection = null;
 var connectionChannelId = null;
