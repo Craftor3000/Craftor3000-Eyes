@@ -2,8 +2,8 @@
 
 ## Utility
 
-This discord bot was created to handle the Craftor3000's discord server.
-It is coded and updated by Craftor3000.
+This discord bot is coded and updated by Craftor3000 and was created to handle the Craftor3000's discord server.
+Current version : Bêta 1.0b
 
 ## Commands
 
