@@ -3,16 +3,24 @@
 ## Utility
 
 This discord bot was created to handle the Craftor3000's discord server
+It is coded by Craftor3000
 
 ## Commands
 
-All the commands start with "!" :
-- info : display the main informations of the bot
-- join : join the bot to the channel
-- play <link | file> : play a music or a sound in the voice channel the executor is
-- pause : pause the current music
-- unpause : unpause the current music
-- stop : disconnect the bot from the voice channel
-- queue : display the music playlist
-- add : add a music to the playlist
-- remove : remove the first music on the playlist
+All the commands start with "!"
+
+### General
+
+- info : Display the main informations of the bot
+- suppr <number> : Delete a number of messages
+
+### Music
+
+- join : Makes the bot join a channel
+- play [ytb link] : Play a music or a sound in the voice channel
+- pause : Pause the current music
+- unpause : Unpause the current music
+- stop : Disconnect the bot from the voice channel
+- queue : Display the music playlist
+- add <ytb link> : Add a music to the playlist
+- remove : Remove the first music on the playlist
