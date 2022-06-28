@@ -2,8 +2,8 @@
 
 ## Utility
 
-This discord bot was created to handle the Craftor3000's discord server\n
-It is coded by Craftor3000
+This discord bot was created to handle the Craftor3000's discord server.
+It is coded and updated by Craftor3000.
 
 ## Commands
 
