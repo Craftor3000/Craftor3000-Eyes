@@ -21,6 +21,7 @@ Client.player = new Player(Client, {
     }
 });
 
+//coucou c'est moi  !!!
 Client.login(process.env.TOKEN);
 
 var connection = null;
