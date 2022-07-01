@@ -126,7 +126,7 @@ Client.on("interactionCreate", interaction  => {
                     interaction.reply("Le nombre de message à supprimer doit se trouver entre 1 et 100");
                 }
             } else {
-                interaction.reply("Vous n'avez pas la permission pour exécuter cette commande");
+                interaction.reply("Vous n'avez pas la permission d'exécuter cette commande");
             }
         }
 
@@ -495,20 +495,9 @@ Client.on("messageCreate", message => {
 
             //Fait rejoindre un salon vocal au bot
             if(command === prefix + "join"){
-                if(message.member.voice.channel){
-                    if(connection == null){
-                        connection = joinVoiceChannel({
-                            channelId: message.member.voice.channelId,
-                            guildId: message.guildId,
-                            adapterCreator: message.guild.voiceAdapterCreator
-                        });
-                        connectionChannelId = message.member.voice.channelId;
-                        message.reply("Le bot viens de rejoindre votre salon vocal");
-                        console.log(message.author.username + " : Join : " + connectionChannelId);
-                    } else {
-                        if(connectionChannelId === message.member.voice.channelId){
-                            message.reply("Le bot est déjà connecté à votre salon vocal");
-                        } else {
+                if(interaction.member.roles.cache.has("991245511887691776")){
+                    if(message.member.voice.channel){
+                        if(connection == null){
                             connection = joinVoiceChannel({
                                 channelId: message.member.voice.channelId,
                                 guildId: message.guildId,
@@ -516,119 +505,148 @@ Client.on("messageCreate", message => {
                             });
                             connectionChannelId = message.member.voice.channelId;
                             message.reply("Le bot viens de rejoindre votre salon vocal");
-                            console.log(message.author.username + " : Rejoin : " + connectionChannelId);
+                            console.log(message.author.username + " : Join : " + connectionChannelId);
+                        } else {
+                            if(connectionChannelId === message.member.voice.channelId){
+                                message.reply("Le bot est déjà connecté à votre salon vocal");
+                            } else {
+                                connection = joinVoiceChannel({
+                                    channelId: message.member.voice.channelId,
+                                    guildId: message.guildId,
+                                    adapterCreator: message.guild.voiceAdapterCreator
+                                });
+                                connectionChannelId = message.member.voice.channelId;
+                                message.reply("Le bot viens de rejoindre votre salon vocal");
+                                console.log(message.author.username + " : Rejoin : " + connectionChannelId);
+                            }
                         }
+                    } else {
+                        message.reply("Veuillez vous connecter à un salon vocal");
                     }
-                    
                 } else {
-                    message.reply("Veuillez vous connecter à un salon vocal");
-                }
-                
+                    message.reply("Vous n'avez pas la permission d'exécuter cette commande");
+                }                
             }
 
             //Joue de la musique dans le salon vocal où le bot est connecté
             if(command === prefix + "play"){
-                if(message.member.voice.channel){
-                    if(connection != null){
-                        if(ytdl.validateURL(args[1])){
-                            if(args.length > 1){
-                                const stream = ytdl(args[1], {filter: 'audioonly'});
-                                flashStream = stream;
-                            } else {
-                                if(musicQueue.length != 0){
-                                    const stream = ytdl(musicQueue[0], {filter: 'audioonly'});
+                if(interaction.member.roles.cache.has("991245511887691776")){
+                    if(message.member.voice.channel){
+                        if(connection != null){
+                            if(ytdl.validateURL(args[1])){
+                                if(args.length > 1){
+                                    const stream = ytdl(args[1], {filter: 'audioonly'});
                                     flashStream = stream;
                                 } else {
-                                    message.reply("La playlist est vide");
+                                    if(musicQueue.length != 0){
+                                        const stream = ytdl(musicQueue[0], {filter: 'audioonly'});
+                                        flashStream = stream;
+                                    } else {
+                                        message.reply("La playlist est vide");
+                                    }
                                 }
-                            }
-                            if(flashStream != null){
-                                const resource = createAudioResource(flashStream);
-                                if(connectionChannelId != message.member.voice.channelId) {
-                                    connectionChange.push(true);
-                                    const row = new MessageActionRow()
-                                        .addComponents(
-                                            new MessageButton()
-                                                .setCustomId("rejoinQuestionYes")
-                                                .setLabel("Oui")
-                                                .setStyle("SUCCESS")
-                                        )
-                                        .addComponents(
-                                            new MessageButton()
-                                                .setCustomId("rejoinQuestionNo")
-                                                .setLabel("Non")
-                                                .setStyle("DANGER")
-                                        )
-                                    message.reply({content: "Voulez-vous reconnecter le bot dans le bon salon vocal ?", components: [row]});
-                                    lastPlayerStream = args[1];
-                                    console.log(message.author.username + " : Question : Rejoin : " + message.member.voice.channelId + " + Play : " + args[1]);
+                                if(flashStream != null){
+                                    const resource = createAudioResource(flashStream);
+                                    if(connectionChannelId != message.member.voice.channelId) {
+                                        connectionChange.push(true);
+                                        const row = new MessageActionRow()
+                                            .addComponents(
+                                                new MessageButton()
+                                                    .setCustomId("rejoinQuestionYes")
+                                                    .setLabel("Oui")
+                                                    .setStyle("SUCCESS")
+                                            )
+                                            .addComponents(
+                                                new MessageButton()
+                                                    .setCustomId("rejoinQuestionNo")
+                                                    .setLabel("Non")
+                                                    .setStyle("DANGER")
+                                            )
+                                        message.reply({content: "Voulez-vous reconnecter le bot dans le bon salon vocal ?", components: [row]});
+                                        lastPlayerStream = args[1];
+                                        console.log(message.author.username + " : Question : Rejoin : " + message.member.voice.channelId + " + Play : " + args[1]);
+                                    } else {
+                                        connection.subscribe(player);
+                                        player.play(resource);
+                                        audioPlaying = true;
+                                        musicQueue.unshift(args[1]);
+                                        message.reply("Lecture de l'audio dans le salon vocal");
+                                        console.log(message.author.username + " : Play : " + args[1]);
+                                    }
                                 } else {
-                                    connection.subscribe(player);
-                                    player.play(resource);
-                                    audioPlaying = true;
-                                    musicQueue.unshift(args[1]);
-                                    message.reply("Lecture de l'audio dans le salon vocal");
-                                    console.log(message.author.username + " : Play : " + args[1]);
+                                    message.reply("Problème dans le stockage de la musique");
                                 }
                             } else {
-                                message.reply("Problème dans le stockage de la musique");
+                                message.reply("URL invalide");
                             }
                         } else {
-                            message.reply("URL invalide");
+                            message.reply("Veuillez connecter le bot à un salon vocal");
                         }
                     } else {
-                        message.reply("Veuillez connecter le bot à un salon vocal");
+                        message.reply("Veuillez vous connecter à un salon vocal");
                     }
                 } else {
-                    message.reply("Veuillez vous connecter à un salon vocal");
+                    message.reply("Vous n'avez pas la permission d'exécuter cette commande");
                 }
             }
 
             //Met en pause la musique
             if(command === prefix + "pause"){
-                if(connection != null){
-                    if(playerPause == false){
-                        player.pause();
-                        playerPause = true;
-                        audioPlaying = false;
-                        message.reply("Le bot a été mis en pause");
-                        console.log(message.author.username + " : Pause : " + connectionChannelId);
+                if(interaction.member.roles.cache.has("991245511887691776")){
+                    if(connection != null){
+                        if(playerPause == false){
+                            player.pause();
+                            playerPause = true;
+                            audioPlaying = false;
+                            message.reply("Le bot a été mis en pause");
+                            console.log(message.author.username + " : Pause : " + connectionChannelId);
+                        } else {
+                            message.reply("Le bot est déjà en pause");
+                        }                   
                     } else {
-                        message.reply("Le bot est déjà en pause");
-                    }                   
+                        message.reply("Veuillez connecter le bot à un salon vocal");
+                    } 
                 } else {
-                    message.reply("Veuillez connecter le bot à un salon vocal");
+                    message.reply("Vous n'avez pas la permission d'exécuter cette commande");
                 }
             }
 
             //Arrête la pause de la musique
             if(command === prefix + "unpause"){
-                if(connection != null){
-                    if(playerPause == true){
-                        player.unpause();
-                        playerPause = false;
-                        audioPlaying = true;
-                        message.reply("Le bot vient d'arrêter sa pause");
-                        console.log(message.author.username + " : Unpause : " + connectionChannelId);
+                if(interaction.member.roles.cache.has("991245511887691776")){
+                    if(connection != null){
+                        if(playerPause == true){
+                            player.unpause();
+                            playerPause = false;
+                            audioPlaying = true;
+                            message.reply("Le bot vient d'arrêter sa pause");
+                            console.log(message.author.username + " : Unpause : " + connectionChannelId);
+                        } else {
+                            message.reply("Le bot n'est pas en pause");
+                        }  
                     } else {
-                        message.reply("Le bot n'est pas en pause");
-                    }  
+                        message.reply("Veuillez connecter le bot à un salon vocal");
+                    }
                 } else {
-                    message.reply("Veuillez connecter le bot à un salon vocal");
+                    message.reply("Vous n'avez pas la permission d'exécuter cette commande");
                 }
             }
 
             //Déconnecte le bot du salon vocal
             if(command === prefix + "stop"){
-                if(connection != null){
-                    connection.disconnect();
-                    connection = null;
-                    console.log(message.author.username + " : Stop : " + connectionChannelId);
-                    connectionChannelId = null;
-                    audioPlaying = false;
-                    message.reply("Le bot vient de se déconnecter de votre salon vocal");
+                if(interaction.member.roles.cache.has("991245511887691776")){
+                    if(connection != null){
+                        connection.disconnect();
+                        connection = null;
+                        console.log(message.author.username + " : Stop : " + connectionChannelId);
+                        connectionChannelId = null;
+                        audioPlaying = false;
+                        message.reply("Le bot vient de se déconnecter de votre salon vocal");
+                    } else {
+                        message.reply("Le bot est déjà déconnecté");
+                    }
                 } else {
-                    message.reply("Le bot est déjà déconnecté");
+                    message.reply("Vous n'avez pas la permission d'exécuter cette commande");
                 }
             }
 
@@ -649,47 +667,58 @@ Client.on("messageCreate", message => {
 
             //Ajouter une musique à la playlist
             if(command === prefix + "add"){
-                let newMusic = args[1];
-                if(args.length > 1){
-                    if(ytdl.validateURL(newMusic)){
-                        musicQueue.push(newMusic);
-                        message.reply(newMusic + " a été ajouté dans la playlist");
-                        console.log(message.author.username + " : Add : " + newMusic);
+                if(interaction.member.roles.cache.has("991245511887691776")){
+                    let newMusic = args[1];
+                    if(args.length > 1){
+                        if(ytdl.validateURL(newMusic)){
+                            musicQueue.push(newMusic);
+                            message.reply(newMusic + " a été ajouté dans la playlist");
+                            console.log(message.author.username + " : Add : " + newMusic);
+                        } else {
+                            message.reply("URL invalide");
+                        }
                     } else {
-                        message.reply("URL invalide");
-                    }
+                        message.reply("Arguments insuffisants : !add <lien>");
+                    } 
                 } else {
-                    message.reply("Arguments insuffisants : !add <lien>");
+                    message.reply("Vous n'avez pas la permission d'exécuter cette commande");
                 }
             }
 
             //Retire une musique de la playlist
             if(command === prefix + "remove"){
-                if(musicQueue.length != 0){
-                    message.reply(musicQueue[0] + " a été retiré de la playlist");
-                    console.log(message.author.username + " : Remove : " + musicQueue[0]);
-                    musicQueue.shift();
+                if(interaction.member.roles.cache.has("991245511887691776")){
+                    if(musicQueue.length != 0){
+                        message.reply(musicQueue[0] + " a été retiré de la playlist");
+                        console.log(message.author.username + " : Remove : " + musicQueue[0]);
+                        musicQueue.shift();
+                    } else {
+                        message.reply("La playlist est déjà vide");
+                    }
                 } else {
-                    message.reply("La playlist est déjà vide");
-                }
+                    message.reply("Vous n'avez pas la permission d'exécuter cette commande");
+                }   
             }
-
         }
     }
         //Commandes utilitaires
         if(command === prefix + "suppr"){
-            if(args.length > 1){
-                let textNumber = args[1];
-                let number = Number(textNumber);
-                if(number > 0 && number < 101){
-                    message.channel.bulkDelete(number + 1);
-                    console.log(message.author.username + " : Suppr : " + textNumber + " messages");
+            if(interaction.member.roles.cache.has("991245759867535360")){
+                if(args.length > 1){
+                    let textNumber = args[1];
+                    let number = Number(textNumber);
+                    if(number > 0 && number < 101){
+                        message.channel.bulkDelete(number + 1);
+                        console.log(message.author.username + " : Suppr : " + textNumber + " messages");
+                    } else {
+                        message.reply("Le nombre de message à supprimer doit se trouver entre 1 et 100");
+                    }
                 } else {
-                    message.reply("Le nombre de message à supprimer doit se trouver entre 1 et 100");
+                    message.reply("Arguments insuffisants : !suppr <nombre>");
                 }
             } else {
-                message.reply("Arguments insuffisants : !suppr <nombre>");
-            }
+                message.reply("Vous n'avez pas la permission d'exécuter cette commande");
+            }            
         }
 
         //COMMANDES TEMPORAIRE
