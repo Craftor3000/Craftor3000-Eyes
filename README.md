@@ -4,6 +4,19 @@
 
 This discord bot is coded and updated by Craftor3000 and was created to handle the Craftor3000's discord server.
 
+## Functions
+
+Music bot :
+- player
+- playlist
+
+Ticket bot :
+- create a ticket
+- send a starter message to a new ticket
+- close a ticket
+- close a ticket with a success
+- ping the support team
+
 ## Commands
 
 All the commands start with "!"
