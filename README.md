@@ -6,16 +6,8 @@ This discord bot is coded and updated by Craftor3000 and was created to handle t
 
 ## Functions
 
-Music bot :
-- player
-- playlist
-
-Ticket bot :
-- create a ticket
-- send a starter message to a new ticket
-- close a ticket
-- close a ticket with a success
-- ping the support team
+This bot can be use as a music bot, containing a player which can play musics, and a playlist which stock the nexts musics.
+It can also be use as a ticket tool which can create tickets with a starter message, close a ticket with a fail or a success and ping the support team.
 
 ## Commands
 
