@@ -495,7 +495,7 @@ Client.on("messageCreate", message => {
 
             //Fait rejoindre un salon vocal au bot
             if(command === prefix + "join"){
-                if(interaction.member.roles.cache.has("991245511887691776")){
+                if(message.member.roles.cache.has("991245511887691776")){
                     if(message.member.voice.channel){
                         if(connection == null){
                             connection = joinVoiceChannel({
@@ -530,7 +530,7 @@ Client.on("messageCreate", message => {
 
             //Joue de la musique dans le salon vocal où le bot est connecté
             if(command === prefix + "play"){
-                if(interaction.member.roles.cache.has("991245511887691776")){
+                if(message.member.roles.cache.has("991245511887691776")){
                     if(message.member.voice.channel){
                         if(connection != null){
                             if(ytdl.validateURL(args[1])){
@@ -592,7 +592,7 @@ Client.on("messageCreate", message => {
 
             //Met en pause la musique
             if(command === prefix + "pause"){
-                if(interaction.member.roles.cache.has("991245511887691776")){
+                if(message.member.roles.cache.has("991245511887691776")){
                     if(connection != null){
                         if(playerPause == false){
                             player.pause();
@@ -613,7 +613,7 @@ Client.on("messageCreate", message => {
 
             //Arrête la pause de la musique
             if(command === prefix + "unpause"){
-                if(interaction.member.roles.cache.has("991245511887691776")){
+                if(message.member.roles.cache.has("991245511887691776")){
                     if(connection != null){
                         if(playerPause == true){
                             player.unpause();
@@ -634,7 +634,7 @@ Client.on("messageCreate", message => {
 
             //Déconnecte le bot du salon vocal
             if(command === prefix + "stop"){
-                if(interaction.member.roles.cache.has("991245511887691776")){
+                if(message.member.roles.cache.has("991245511887691776")){
                     if(connection != null){
                         connection.disconnect();
                         connection = null;
@@ -667,7 +667,7 @@ Client.on("messageCreate", message => {
 
             //Ajouter une musique à la playlist
             if(command === prefix + "add"){
-                if(interaction.member.roles.cache.has("991245511887691776")){
+                if(message.member.roles.cache.has("991245511887691776")){
                     let newMusic = args[1];
                     if(args.length > 1){
                         if(ytdl.validateURL(newMusic)){
@@ -687,7 +687,7 @@ Client.on("messageCreate", message => {
 
             //Retire une musique de la playlist
             if(command === prefix + "remove"){
-                if(interaction.member.roles.cache.has("991245511887691776")){
+                if(message.member.roles.cache.has("991245511887691776")){
                     if(musicQueue.length != 0){
                         message.reply(musicQueue[0] + " a été retiré de la playlist");
                         console.log(message.author.username + " : Remove : " + musicQueue[0]);
@@ -703,7 +703,7 @@ Client.on("messageCreate", message => {
     }
         //Commandes utilitaires
         if(command === prefix + "suppr"){
-            if(interaction.member.roles.cache.has("991245759867535360")){
+            if(message.member.roles.cache.has("991245759867535360")){
                 if(args.length > 1){
                     let textNumber = args[1];
                     let number = Number(textNumber);
