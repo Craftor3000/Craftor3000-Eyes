@@ -213,6 +213,7 @@ Client.on("interactionCreate", interaction  => {
                                 connection.subscribe(player);
                                 player.play(resource);
                                 audioPlaying = true;
+                                playerPause = false;
                                 musicQueue.unshift(flashMusic);
                                 interaction.reply("Lecture de l'audio dans le salon vocal");
                                 console.log(interaction.user.username + " : Play : " + flashMusic);
@@ -569,6 +570,7 @@ Client.on("messageCreate", message => {
                                         connection.subscribe(player);
                                         player.play(resource);
                                         audioPlaying = true;
+                                        playerPause = false;
                                         musicQueue.unshift(args[1]);
                                         message.reply("Lecture de l'audio dans le salon vocal");
                                         console.log(message.author.username + " : Play : " + args[1]);
