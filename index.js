@@ -608,11 +608,11 @@ Client.on('modalSubmit', (modal) => {
         const name = modal.getTextInputValue('ticketType');
         const description = modal.getTextInputValue("ticketDescription");
         let channelName = name + "-" + modal.user.username;
-        lastTicketData.push(name);
-        lastTicketData.push(description);
-        lastTicketData.push(modal.user.username);
+        vars.get("lastTicketData").push(name);
+        vars.get("lastTicketData").push(description);
+        vars.get("lastTicketData").push(modal.user.username);
         const date = new Date().toLocaleString();
-        uploadTicketEmbed = true;
+        vars.set("uploadTicketEmbed", true);
         modal.guild.channels.create(channelName, { type: "GUILD_TEXT", parent: modal.guild.channels.cache.get("987034784163311717"), permissionOverwrites: [{id: "981985626868047942", deny: ["VIEW_CHANNEL"]},{id: "982712695990145115", allow: ["VIEW_CHANNEL"]},{id: "987781162992820254", allow: ["VIEW_CHANNEL"]},{id: modal.user.id, allow: ["VIEW_CHANNEL"]}], topic: modal.user.username + "│" + date + "│" + name + "│" + description});
         modal.reply({content: "Votre ticket vient d'être créé !", ephemeral: true});
         console.log(modal.user.username + " : TicketCreation : " + name);
@@ -620,16 +620,16 @@ Client.on('modalSubmit', (modal) => {
 });
 
 Client.on("channelCreate", (chan) => {
-    if(uploadTicketEmbed){
-        if(lastTicketData.length > 2){
+    if(vars.get("uploadTicketEmbed")){
+        if(vars.get("lastTicketData").length > 2){
             if(chan.isText()){
-                let name = lastTicketData[0];
-                let description = lastTicketData[1];
-                let person = lastTicketData[2];
-                lastTicketData.shift();
-                lastTicketData.shift();
-                lastTicketData.shift();
-                uploadTicketEmbed = false;
+                let name = vars.get("lastTicketData")[0];
+                let description = vars.get("lastTicketData")[1];
+                let person = vars.get("lastTicketData")[2];
+                vars.get("lastTicketData").shift();
+                vars.get("lastTicketData").shift();
+                vars.get("lastTicketData").shift();
+                vars.set("uploadTicketEmbed", false);
                 let currentDate = new Date();
                 let currentTextDate = currentDate.toLocaleString();
                 let dates = currentTextDate.split(",");
