@@ -1,4 +1,6 @@
 const Discord = require("discord.js");
+const vars = require("./variables.js");
+const fs = require("fs");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const ytdl = require("ytdl-core");
 const { MessageActionRow, MessageButton, MessageEmbed, MessageSelectMenu  } = require("discord.js");
@@ -23,18 +25,13 @@ Client.player = new Player(Client, {
 
 Client.login("OTgxOTg0MDczNzQ2NjI4Njc5.Gz2H4i.zkeGzeHolbo2YzPN0zOKuiwzEaFSYUR8XOG7I8");
 
-var connection = null;
-var connectionChannelId = null;
-var connectionChange = [];
-var lastPlayerStream = null;
-var flashStream = null;
-var flashMusic = null;
-const player = createAudioPlayer();
-var playerPause = false;
-var musicQueue = [];
-var audioPlaying = false;
-var uploadTicketEmbed = false;
-var lastTicketData = [];
+Client.commands = new Discord.Collection();
+const commandFiles = fs.readdirSync("./commands").filter(file => file.endsWith(".js"));
+for(const file of commandFiles){
+    const command = require("./commands/" + file);
+    Client.commands.set(command.name, command);
+    console.log(Client.commands);
+}
 
 //===================================================================================================================
 
@@ -83,7 +80,7 @@ const remove = new SlashCommandBuilder()
 
 
 Client.on("ready", () => {
-    
+    /*
     Client.guilds.cache.get("981985626868047942").commands.create(info);
     Client.guilds.cache.get("981985626868047942").commands.create(suppr);
     Client.guilds.cache.get("981985626868047942").commands.create(join);
@@ -96,8 +93,9 @@ Client.on("ready", () => {
     Client.guilds.cache.get("981985626868047942").commands.create(remove);
 
     Client.user.setActivity("!help | By @Craftor3000#5844");
-        
+    */
     console.log("Bot en ligne...");
+    
 })
 
 //===================================================================================================================
@@ -109,7 +107,7 @@ Client.on("interactionCreate", interaction  => {
             const embed = new MessageEmbed()
                 .setColor("GOLD")
                 .setTitle("Informations de Craftor3000's Eyes")
-                .setDescription("**Autheur :** <@927990159495008266>\n**Version :** Bêta 1.0b")
+                .setDescription("**Autheur :** <@927990159495008266>\n**Version :** Bêta 1.0c")
             interaction.reply({allowedMentions: false, embeds: [embed]})
             console.log(interaction.user.username + " : Info")      
         }
@@ -434,23 +432,23 @@ Client.on("interactionCreate", interaction  => {
 
         //Répond Oui à la reconnection du bot dans le bon channel vocal
         if(interaction.customId === "rejoinQuestionYes"){
-            if(connectionChange[0]){
-                connection = joinVoiceChannel({
+            if(vars.get("connectionChange")[0]){
+                vars.set("connection", joinVoiceChannel({
                     channelId: interaction.member.voice.channelId,
                     guildId: interaction.guildId,
                     adapterCreator: interaction.guild.voiceAdapterCreator
-                });
-                connectionChannelId = interaction.member.voice.channelId;
-                const stream = ytdl(lastPlayerStream, {filter: 'audioonly'});
+                }));
+                vars.set("connectionChannelId", interaction.member.voice.channelId);
+                const stream = ytdl(vars.get("lastPlayerStream"), {filter: 'audioonly'});
                 const resource = createAudioResource(stream);
-                connection.subscribe(player);
-                player.play(resource);
-                audioPlaying = true;
-                musicQueue.push(lastPlayerStream);
+                vars.get("connection").subscribe(vars.get("player"));
+                vars.get("player").play(resource);
+                vars.set("audioPlaying", true);
+                vars.get("musicQueue").push(vars.get("lastPlayerStream"));
                 interaction.reply("Le bot viens de rejoindre votre salon vocal et commence la lecture de l'audio");
-                console.log(interaction.user.username + " : Yes : Rejoin : " + connectionChannelId + " + Play : " + lastPlayerStream);
-                connectionChange.shift();
-                lastPlayerStream = null;
+                console.log(interaction.user.username + " : Yes : Rejoin : " + vars.get("connectionChannelId") + " + Play : " + vars.get("lastPlayerStream"));
+                vars.get("connectionChange").shift();
+                vars.set("lastPlayerStream", null);
             } else {
                 interaction.reply({content: "Aucune réponse ne vous a été demandée", ephemeral: true});
             }
@@ -458,15 +456,15 @@ Client.on("interactionCreate", interaction  => {
 
         //Répond Non à la reconnection du bot dans le bon channel vocal
         if(interaction.customId === "rejoinQuestionNo"){
-            if(connectionChange[0]){
-                const stream = ytdl(lastPlayerStream, {filter: 'audioonly'});
+            if(vars.get("connectionChange")[0]){
+                const stream = ytdl(vars.get("lastPlayerStream"), {filter: 'audioonly'});
                 const resource = createAudioResource(stream);
-                connection.subscribe(player);
-                player.play(resource);
-                audioPlaying = true;
+                vars.get("connection").subscribe(vars.get("player"));
+                vars.get("player").play(resource);
+                vars.set("audioPlaying", true);
                 interaction.reply("Lecture de l'audio dans le salon vocal");
                 console.log(interaction.user.username + " : No : Rejoin + Play");
-                connectionChange.shift();
+                vars.get("connectionChange").shift();
             } else {
                 interaction.reply({content: "Aucune réponse ne vous a été demandée", ephemeral: true});
             }
@@ -479,118 +477,21 @@ Client.on("interactionCreate", interaction  => {
 const prefix = "!";
 
 Client.on("messageCreate", message => {
+
     //Commandes avec préfix "!"
     if(!message.author.bot){
         var args = message.content.split(" ");
         var command = args[0];
+        var commandName = command.replace(prefix, "");
+
+        if(Client.commands.has(commandName)){
+            Client.commands.get(commandName).execute(message, args);
+        }
+        
+
+
         //Commandes classiques
         if(message.channelId === "982295220517482557"){
-            if(args[0] === prefix + "info"){
-                const embed = new MessageEmbed()
-                    .setColor("GOLD")
-                    .setTitle("Informations de Craftor3000's Eyes")
-                    .setDescription("**Autheur :** <@927990159495008266>\n**Version :** Bêta 1.0b")
-                message.reply({allowedMentions: false, embeds: [embed]})
-                console.log(message.author.username + " : Info")
-            }                
-
-            //Fait rejoindre un salon vocal au bot
-            if(command === prefix + "join"){
-                if(message.member.roles.cache.has("991245511887691776")){
-                    if(message.member.voice.channel){
-                        if(connection == null){
-                            connection = joinVoiceChannel({
-                                channelId: message.member.voice.channelId,
-                                guildId: message.guildId,
-                                adapterCreator: message.guild.voiceAdapterCreator
-                            });
-                            connectionChannelId = message.member.voice.channelId;
-                            message.reply("Le bot viens de rejoindre votre salon vocal");
-                            console.log(message.author.username + " : Join : " + connectionChannelId);
-                        } else {
-                            if(connectionChannelId === message.member.voice.channelId){
-                                message.reply("Le bot est déjà connecté à votre salon vocal");
-                            } else {
-                                connection = joinVoiceChannel({
-                                    channelId: message.member.voice.channelId,
-                                    guildId: message.guildId,
-                                    adapterCreator: message.guild.voiceAdapterCreator
-                                });
-                                connectionChannelId = message.member.voice.channelId;
-                                message.reply("Le bot viens de rejoindre votre salon vocal");
-                                console.log(message.author.username + " : Rejoin : " + connectionChannelId);
-                            }
-                        }
-                    } else {
-                        message.reply("Veuillez vous connecter à un salon vocal");
-                    }
-                } else {
-                    message.reply("Vous n'avez pas la permission d'exécuter cette commande");
-                }                
-            }
-
-            //Joue de la musique dans le salon vocal où le bot est connecté
-            if(command === prefix + "play"){
-                if(message.member.roles.cache.has("991245511887691776")){
-                    if(message.member.voice.channel){
-                        if(connection != null){
-                            if(ytdl.validateURL(args[1])){
-                                if(args.length > 1){
-                                    const stream = ytdl(args[1], {filter: 'audioonly'});
-                                    flashStream = stream;
-                                } else {
-                                    if(musicQueue.length != 0){
-                                        const stream = ytdl(musicQueue[0], {filter: 'audioonly'});
-                                        flashStream = stream;
-                                    } else {
-                                        message.reply("La playlist est vide");
-                                    }
-                                }
-                                if(flashStream != null){
-                                    const resource = createAudioResource(flashStream);
-                                    if(connectionChannelId != message.member.voice.channelId) {
-                                        connectionChange.push(true);
-                                        const row = new MessageActionRow()
-                                            .addComponents(
-                                                new MessageButton()
-                                                    .setCustomId("rejoinQuestionYes")
-                                                    .setLabel("Oui")
-                                                    .setStyle("SUCCESS")
-                                            )
-                                            .addComponents(
-                                                new MessageButton()
-                                                    .setCustomId("rejoinQuestionNo")
-                                                    .setLabel("Non")
-                                                    .setStyle("DANGER")
-                                            )
-                                        message.reply({content: "Voulez-vous reconnecter le bot dans le bon salon vocal ?", components: [row]});
-                                        lastPlayerStream = args[1];
-                                        console.log(message.author.username + " : Question : Rejoin : " + message.member.voice.channelId + " + Play : " + args[1]);
-                                    } else {
-                                        connection.subscribe(player);
-                                        player.play(resource);
-                                        audioPlaying = true;
-                                        playerPause = false;
-                                        musicQueue.unshift(args[1]);
-                                        message.reply("Lecture de l'audio dans le salon vocal");
-                                        console.log(message.author.username + " : Play : " + args[1]);
-                                    }
-                                } else {
-                                    message.reply("Problème dans le stockage de la musique");
-                                }
-                            } else {
-                                message.reply("URL invalide");
-                            }
-                        } else {
-                            message.reply("Veuillez connecter le bot à un salon vocal");
-                        }
-                    } else {
-                        message.reply("Veuillez vous connecter à un salon vocal");
-                    }
-                } else {
-                    message.reply("Vous n'avez pas la permission d'exécuter cette commande");
-                }
-            }
 
             //Met en pause la musique
             if(command === prefix + "pause"){
@@ -799,18 +700,18 @@ Client.on("guildMemberAdd", member => {
 });
 
 //Auto-play dans la playlist quand la musique actuelle est terminé
-player.on(AudioPlayerStatus.Idle, () => {
-    if(audioPlaying){
-        if(musicQueue.length != 0){
-            musicQueue.shift();
+vars.get("player").on(AudioPlayerStatus.Idle, () => {
+    if(vars.get("audioPlaying")){
+        if(vars.get("musicQueue").length != 0){
+            vars.get("musicQueue").shift();
         }
-        if(musicQueue.length != 0){
-            if(ytdl.validateURL(musicQueue[0])){
-                const stream = ytdl(musicQueue[0], {filter: 'audioonly'});
+        if(vars.get("musicQueue").length != 0){
+            if(ytdl.validateURL(vars.get("musicQueue")[0])){
+                const stream = ytdl(vars.get("musicQueue")[0], {filter: 'audioonly'});
                 const resource = createAudioResource(stream);
-                connection.subscribe(player);
-                player.play(resource);
-                console.log("AutoPlay : " + musicQueue[0]);
+                vars.get("connection").subscribe(vars.get("player"));
+                vars.get("player").play(resource);
+                console.log("AutoPlay : " + vars.get("musicQueue")[0]);
             }
         }
     }
@@ -885,7 +786,7 @@ Client.on("shardError", err => {
     console.log("Erreur : Websocket and Network : " + err.name);
     console.log(err.message);
 })
-player.on("error", err => {
+vars.get("player").on("error", err => {
     console.log("Erreur : player : " + err.message);
 });
 process.on('unhandledRejection', error => {
