@@ -30,7 +30,6 @@ const commandFiles = fs.readdirSync("./commands").filter(file => file.endsWith("
 for(const file of commandFiles){
     const command = require("./commands/" + file);
     Client.commands.set(command.name, command);
-    console.log(Client.commands);
 }
 
 //===================================================================================================================
@@ -91,9 +90,9 @@ Client.on("ready", () => {
     Client.guilds.cache.get("981985626868047942").commands.create(queue);
     Client.guilds.cache.get("981985626868047942").commands.create(add);
     Client.guilds.cache.get("981985626868047942").commands.create(remove);
-
-    Client.user.setActivity("!help | By @Craftor3000#5844");
     */
+    Client.user.setActivity("!help | By @Craftor3000#5844");
+    
     console.log("Bot en ligne...");
     
 })
@@ -487,122 +486,6 @@ Client.on("messageCreate", message => {
         if(Client.commands.has(commandName)){
             Client.commands.get(commandName).execute(message, args);
         }
-        
-
-
-        //Commandes classiques
-        if(message.channelId === "982295220517482557"){
-
-            //Met en pause la musique
-            if(command === prefix + "pause"){
-                if(message.member.roles.cache.has("991245511887691776")){
-                    if(connection != null){
-                        if(playerPause == false){
-                            player.pause();
-                            playerPause = true;
-                            audioPlaying = false;
-                            message.reply("Le bot a été mis en pause");
-                            console.log(message.author.username + " : Pause : " + connectionChannelId);
-                        } else {
-                            message.reply("Le bot est déjà en pause");
-                        }                   
-                    } else {
-                        message.reply("Veuillez connecter le bot à un salon vocal");
-                    } 
-                } else {
-                    message.reply("Vous n'avez pas la permission d'exécuter cette commande");
-                }
-            }
-
-            //Arrête la pause de la musique
-            if(command === prefix + "unpause"){
-                if(message.member.roles.cache.has("991245511887691776")){
-                    if(connection != null){
-                        if(playerPause == true){
-                            player.unpause();
-                            playerPause = false;
-                            audioPlaying = true;
-                            message.reply("Le bot vient d'arrêter sa pause");
-                            console.log(message.author.username + " : Unpause : " + connectionChannelId);
-                        } else {
-                            message.reply("Le bot n'est pas en pause");
-                        }  
-                    } else {
-                        message.reply("Veuillez connecter le bot à un salon vocal");
-                    }
-                } else {
-                    message.reply("Vous n'avez pas la permission d'exécuter cette commande");
-                }
-            }
-
-            //Déconnecte le bot du salon vocal
-            if(command === prefix + "stop"){
-                if(message.member.roles.cache.has("991245511887691776")){
-                    if(connection != null){
-                        connection.disconnect();
-                        connection = null;
-                        console.log(message.author.username + " : Stop : " + connectionChannelId);
-                        connectionChannelId = null;
-                        audioPlaying = false;
-                        message.reply("Le bot vient de se déconnecter de votre salon vocal");
-                    } else {
-                        message.reply("Le bot est déjà déconnecté");
-                    }
-                } else {
-                    message.reply("Vous n'avez pas la permission d'exécuter cette commande");
-                }
-            }
-
-            //Affiche la playlist
-            if(command === prefix + "queue"){
-                if(musicQueue.length != 0){
-                    if(musicQueue.length == 1){
-                        message.reply(musicQueue.toString());
-                    } else {
-                        let reply = musicQueue.toString().replace(",", "\n");
-                        message.reply(reply);
-                    }
-                    console.log(message.author.username + " : Playlist : " + musicQueue.length);
-                } else {
-                    message.reply("La playlist est vide");
-                }
-            }
-
-            //Ajouter une musique à la playlist
-            if(command === prefix + "add"){
-                if(message.member.roles.cache.has("991245511887691776")){
-                    let newMusic = args[1];
-                    if(args.length > 1){
-                        if(ytdl.validateURL(newMusic)){
-                            musicQueue.push(newMusic);
-                            message.reply(newMusic + " a été ajouté dans la playlist");
-                            console.log(message.author.username + " : Add : " + newMusic);
-                        } else {
-                            message.reply("URL invalide");
-                        }
-                    } else {
-                        message.reply("Arguments insuffisants : !add <lien>");
-                    } 
-                } else {
-                    message.reply("Vous n'avez pas la permission d'exécuter cette commande");
-                }
-            }
-
-            //Retire une musique de la playlist
-            if(command === prefix + "remove"){
-                if(message.member.roles.cache.has("991245511887691776")){
-                    if(musicQueue.length != 0){
-                        message.reply(musicQueue[0] + " a été retiré de la playlist");
-                        console.log(message.author.username + " : Remove : " + musicQueue[0]);
-                        musicQueue.shift();
-                    } else {
-                        message.reply("La playlist est déjà vide");
-                    }
-                } else {
-                    message.reply("Vous n'avez pas la permission d'exécuter cette commande");
-                }   
-            }
-        }
     }
         //Commandes utilitaires
         if(command === prefix + "suppr"){
@@ -664,19 +547,21 @@ Client.on("messageCreate", message => {
         //COMMANDES ADMINS
         if(message.member.id === "927990159495008266" || message.member.id === "817708844335235112"){
             if(message.content === "$botStop"){
+                if(message.deletable) message.delete();
                 console.log(message.member.user.username + " : EXIT");
-                if(connection != null){
-                    connection.disconnect();
-                    connection = null;
+                if(vars.get("connection") != null){
+                    vars.get("connection").disconnect();
+                    vars.set("connection", null);
                 }
                 Client.destroy();
                 process.exit();
             }
             if(message.content === "$botRestart"){
+                if(message.deletable) message.delete();
                 console.log(message.member.user.username + " : RESTART");
-                if(connection != null){
-                    connection.disconnect();
-                    connection = null;
+                if(vars.get("connection") != null){
+                    vars.get("connection").disconnect();
+                    vars.set("connection", null);
                 }
                 Client.destroy();
                 Client.login("OTgxOTg0MDczNzQ2NjI4Njc5.Gz2H4i.zkeGzeHolbo2YzPN0zOKuiwzEaFSYUR8XOG7I8");

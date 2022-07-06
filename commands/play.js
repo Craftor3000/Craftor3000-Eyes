@@ -10,51 +10,55 @@ module.exports = {
         if(message.member.roles.cache.has("991245511887691776")){
             if(message.member.voice.channel){
                 if(vars.get("connection") != null){
-                    if(ytdl.validateURL(args[1])){
-                        var stream;
-                        if(args.length > 1){
+                    var stream = null;
+                    if(args.length > 1){
+                        if(ytdl.validateURL(args[1])){
                             stream = ytdl(args[1], {filter: 'audioonly'});
                         } else {
-                            if(vars.get("musicQueue").length != 0){
-                                stream = ytdl(musicQueue[0], {filter: 'audioonly'});
-                            } else {
-                                message.reply("La playlist est vide");
-                            }
-                        }
-                        if(stream != null){
-                            const resource = createAudioResource(stream);
-                            if(vars.get("connectionChannelId") != message.member.voice.channelId) {
-                                vars.get("connectionChange").push(true);
-                                const row = new MessageActionRow()
-                                    .addComponents(
-                                        new MessageButton()
-                                            .setCustomId("rejoinQuestionYes")
-                                            .setLabel("Oui")
-                                            .setStyle("SUCCESS")
-                                    )
-                                    .addComponents(
-                                        new MessageButton()
-                                            .setCustomId("rejoinQuestionNo")
-                                            .setLabel("Non")
-                                            .setStyle("DANGER")
-                                    )
-                                message.reply({content: "Voulez-vous reconnecter le bot dans le bon salon vocal ?", components: [row]});
-                                vars.set("lastPlayerStream", args[1]);
-                                console.log(message.author.username + " : Question : Rejoin : " + message.member.voice.channelId + " + Play : " + args[1]);
-                            } else {
-                                vars.get("connection").subscribe(vars.get("player"));
-                                vars.get("player").play(resource);
-                                vars.set("audioPlaying", true);
-                                vars.set("playerPause", false);
-                                vars.get("musicQueue").unshift(args[1]);
-                                message.reply("Lecture de l'audio dans le salon vocal");
-                                console.log(message.author.username + " : Play : " + args[1]);
-                            }
-                        } else {
-                            message.reply("Problème dans le stockage de la musique");
+                            message.reply("URL invalide");
                         }
                     } else {
-                        message.reply("URL invalide");
+                        if(vars.get("musicQueue").length != 0){
+                            stream = ytdl(vars.get("musicQueue")[0], {filter: 'audioonly'});
+                        } else {
+                            message.reply("La playlist est vide");
+                        }
+                    }
+                    if(stream != null){
+                        const resource = createAudioResource(stream);
+                        if(vars.get("connectionChannelId") != message.member.voice.channelId) {
+                            vars.get("connectionChange").push(true);
+                            const row = new MessageActionRow()
+                                .addComponents(
+                                    new MessageButton()
+                                        .setCustomId("rejoinQuestionYes")
+                                        .setLabel("Oui")
+                                        .setStyle("SUCCESS")
+                                )
+                                .addComponents(
+                                    new MessageButton()
+                                        .setCustomId("rejoinQuestionNo")
+                                        .setLabel("Non")
+                                        .setStyle("DANGER")
+                                )
+                            message.reply({content: "Voulez-vous reconnecter le bot dans le bon salon vocal ?", components: [row]});
+                            vars.set("lastPlayerStream", args[1]);
+                            console.log(message.author.username + " : Question : Rejoin : " + message.member.voice.channelId + " + Play : " + args[1]);
+                        } else {
+                            vars.get("connection").subscribe(vars.get("player"));
+                            vars.get("player").play(resource);
+                            vars.set("audioPlaying", true);
+                            vars.set("playerPause", false);
+                            let musicSource;
+                            if(args.length > 1){
+                                vars.get("musicQueue").unshift(args[1]);
+                                musicSource = args[1];
+                            } else {
+                                musicSource = vars.get("musicQueue")[0];
+                            }
+                            message.reply("Lecture de l'audio dans le salon vocal");
+                            console.log(message.author.username + " : Play : " + musicSource);
+                        }
                     }
                 } else {
                     message.reply("Veuillez connecter le bot à un salon vocal");
