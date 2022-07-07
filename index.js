@@ -24,19 +24,25 @@ Client.player = new Player(Client, {
 Client.login("OTgxOTg0MDczNzQ2NjI4Njc5.Gz2H4i.zkeGzeHolbo2YzPN0zOKuiwzEaFSYUR8XOG7I8");
 
 Client.commands = new Discord.Collection();
+Client.buttons = new Discord.Collection();
 const commandFiles = fs.readdirSync("./commands").filter(file => file.endsWith(".js"));
 const eventFiles = fs.readdirSync("./events").filter(file => file.endsWith(".js"));
+const buttonFiles = fs.readdirSync("./buttons").filter(file => file.endsWith(".js"));
 for(const file of commandFiles){
     const command = require("./commands/" + file);
     Client.commands.set(command.name, command);
 }
-for (const file of eventFiles) {
+for(const file of eventFiles){
 	const event = require("./events/" + file);
 	if (event.once) {
 		Client.once(event.name, (...args) => event.execute(...args));
 	} else {
 		Client.on(event.name, (...args) => event.execute(...args));
 	}
+}
+for(const file of buttonFiles){
+    const button = require("./buttons/" + file);
+    Client.buttons.set(button.name, button);
 }
 
 //Auto-play dans la playlist quand la musique actuelle est terminé
