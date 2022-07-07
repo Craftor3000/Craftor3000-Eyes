@@ -6,7 +6,7 @@ const vars = require("../variables.js");
 module.exports = {
     name: "play",
     description: "Joue de la musique dans le salon vocal où le bot est connecté",
-    execute (message, args) {
+    execute (message, args, isInteraction) {
         if(message.member.roles.cache.has("991245511887691776")){
             if(message.member.voice.channel){
                 if(vars.get("connection") != null){
@@ -43,7 +43,13 @@ module.exports = {
                                 )
                             message.reply({content: "Voulez-vous reconnecter le bot dans le bon salon vocal ?", components: [row]});
                             vars.set("lastPlayerStream", args[1]);
-                            console.log(message.author.username + " : Question : Rejoin : " + message.member.voice.channelId + " + Play : " + args[1]);
+                            var user;
+                            if(isInteraction){
+                                user = message.user.username;
+                            } else {
+                                user = message.author.username;
+                            }
+                            console.log(user + " : Question : Rejoin : " + message.member.voice.channelId + " + Play : " + args[1]);
                         } else {
                             vars.get("connection").subscribe(vars.get("player"));
                             vars.get("player").play(resource);
@@ -57,7 +63,13 @@ module.exports = {
                                 musicSource = vars.get("musicQueue")[0];
                             }
                             message.reply("Lecture de l'audio dans le salon vocal");
-                            console.log(message.author.username + " : Play : " + musicSource);
+                            var user;
+                            if(isInteraction){
+                                user = message.user.username;
+                            } else {
+                                user = message.author.username;
+                            }
+                            console.log(user + " : Play : " + musicSource);
                         }
                     }
                 } else {

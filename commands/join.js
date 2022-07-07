@@ -4,7 +4,7 @@ const vars = require("../variables.js");
 module.exports = {
     name: "join",
     description: "Fait rejoindre un salon vocal au bot",
-    execute (message, args) {
+    execute (message, args, isInteraction) {
 
         if(message.member.roles.cache.has("991245511887691776")){
             if(message.member.voice.channel){
@@ -16,7 +16,13 @@ module.exports = {
                     }));
                     vars.set("connectionChannelId", message.member.voice.channelId);
                     message.reply("Le bot viens de rejoindre votre salon vocal");
-                    console.log(message.author.username + " : Join : " + vars.get("connectionChannelId"));
+                    var user;
+                    if(isInteraction){
+                        user = message.user.username;
+                    } else {
+                        user = message.author.username;
+                    }
+                    console.log(user + " : Join : " + vars.get("connectionChannelId"));
                 } else {
                     if(vars.get("connectionChannelId") === message.member.voice.channelId){
                         message.reply("Le bot est déjà connecté à votre salon vocal");
@@ -28,7 +34,13 @@ module.exports = {
                         }));
                         vars.set("connectionChannelId", message.member.voice.channelId);
                         message.reply("Le bot viens de rejoindre votre salon vocal");
-                        console.log(message.author.username + " : Rejoin : " + vars.get("connectionChannelId"));
+                        var user;
+                        if(isInteraction){
+                            user = message.user.username;
+                        } else {
+                            user = message.author.username;
+                        }
+                        console.log(user + " : Rejoin : " + vars.get("connectionChannelId"));
                     }
                 }
             } else {

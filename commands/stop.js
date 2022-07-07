@@ -3,12 +3,18 @@ const vars = require("../variables.js");
 module.exports = {
     name: "stop",
     description: "Déconnecte le bot du salon vocal",
-    execute (message, args) {
+    execute (message, args, isInteraction) {
         if(message.member.roles.cache.has("991245511887691776")){
             if(vars.get("connection") != null){
                 vars.get("connection").disconnect();
                 vars.set("connection", null);
-                console.log(message.author.username + " : Stop : " + vars.get("connectionChannelId"));
+                var user;
+                if(isInteraction){
+                    user = message.user.username;
+                } else {
+                    user = message.author.username;
+                }
+                console.log(user + " : Stop : " + vars.get("connectionChannelId"));
                 vars.set("connectionChannelId", null);
                 vars.set("audioPlaying", false);
                 message.reply("Le bot vient de se déconnecter de votre salon vocal");
