@@ -8,11 +8,9 @@ const player = createAudioPlayer();
 var playerPause = false;
 var musicQueue = [];
 var audioPlaying = false;
-var uploadTicketEmbed = false;
-var lastTicketData = [];
 
 var globalVars = new Map();
-globalVars.set("connection", connection).set("connectionChannelId", connectionChannelId).set("connectionChange", connectionChange).set("lastPlayerStream", lastPlayerStream).set("player", player).set("playerPause", playerPause).set("musicQueue", musicQueue).set("audioPlaying", audioPlaying).set("uploadTicketEmbed", uploadTicketEmbed).set("lastTicketData", lastTicketData);
+globalVars.set("connection", connection).set("connectionChannelId", connectionChannelId).set("connectionChange", connectionChange).set("lastPlayerStream", lastPlayerStream).set("player", player).set("playerPause", playerPause).set("musicQueue", musicQueue).set("audioPlaying", audioPlaying);
 
 module.exports = {
     name: "Global Variables",
@@ -41,9 +39,7 @@ module.exports = {
         playerPause = false;
         musicQueue = [];
         audioPlaying = false;
-        uploadTicketEmbed = false;
-        lastTicketData = [];
         var globalVars = new Map();
-        globalVars.set("connection", connection).set("connectionChannelId", connectionChannelId).set("connectionChange", connectionChange).set("lastPlayerStream", lastPlayerStream).set("player", player).set("playerPause", playerPause).set("musicQueue", musicQueue).set("audioPlaying", audioPlaying).set("uploadTicketEmbed", uploadTicketEmbed).set("lastTicketData", lastTicketData);
+        globalVars.set("connection", connection).set("connectionChannelId", connectionChannelId).set("connectionChange", connectionChange).set("lastPlayerStream", lastPlayerStream).set("player", player).set("playerPause", playerPause).set("musicQueue", musicQueue).set("audioPlaying", audioPlaying);
     }
 }

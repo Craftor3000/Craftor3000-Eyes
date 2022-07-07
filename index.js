@@ -1,13 +1,11 @@
 const Discord = require("discord.js");
 const vars = require("./variables.js");
 const fs = require("fs");
-const { SlashCommandBuilder } = require("@discordjs/builders");
 const ytdl = require("ytdl-core");
-const { MessageActionRow, MessageButton, MessageEmbed, MessageSelectMenu  } = require("discord.js");
-const { joinVoiceChannel, createAudioPlayer, createAudioResource, generateDependencyReport, AudioPlayerStatus } = require('@discordjs/voice');
-const { Player, Queue } = require("discord-player");
-const discordModals = require("discord-modals")
-const { Modal, TextInputComponent, showModal } = discordModals;
+const { createAudioResource, AudioPlayerStatus } = require('@discordjs/voice');
+const { Player } = require("discord-player");
+const discordModals = require("discord-modals");
+const { channel } = require("diagnostics_channel");
 const Client = new Discord.Client({
     intents: [
         Discord.Intents.FLAGS.GUILDS,
