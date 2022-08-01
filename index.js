@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const vars = require("./variables.js");
 const fs = require("fs");
+const dotenv = require("dotenv");
 const ytdl = require("ytdl-core");
 const { createAudioResource, AudioPlayerStatus } = require('@discordjs/voice');
 const { Player } = require("discord-player");
@@ -20,6 +21,7 @@ Client.player = new Player(Client, {
         highWaterMark: 1 << 25
     }
 });
+dotenv.config();
 
 Client.login(process.env.TOKEN);
 
