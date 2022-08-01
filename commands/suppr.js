@@ -3,16 +3,16 @@ const vars = require("../variables.js");
 module.exports = {
     name: "suppr",
     description: "Supprime un nombre de message déterminé",
-    async execute (message, args, isInteraction) {
+    execute (message, args, isInteraction) {
         if(message.member.roles.cache.has("991245759867535360")){
             if(args.length > 1){
                 let textNumber = args[1];
                 let number = Number(textNumber);
                 if(number > 0 && number < 101){
                     if(isInteraction){
-                        await message.channel.bulkDelete(number);
+                        message.channel.bulkDelete(number);
                     } else {
-                        await message.channel.bulkDelete(number + 1);
+                        message.channel.bulkDelete(number + 1);
                     }
                     console.log(message.member.user.username + " : Suppr : " + textNumber + " messages");
                     if(number == 1){
