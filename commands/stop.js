@@ -8,13 +8,7 @@ module.exports = {
             if(vars.get("connection") != null){
                 vars.get("connection").disconnect();
                 vars.set("connection", null);
-                var user;
-                if(isInteraction){
-                    user = message.user.username;
-                } else {
-                    user = message.author.username;
-                }
-                console.log(user + " : Stop : " + vars.get("connectionChannelId"));
+                console.log(message.member.user.username + " : Stop : " + vars.get("connectionChannelId"));
                 vars.set("connectionChannelId", null);
                 vars.set("audioPlaying", false);
                 message.reply("Le bot vient de se déconnecter de votre salon vocal");

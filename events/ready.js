@@ -1,5 +1,9 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
 
+const help = new SlashCommandBuilder()
+    .setName("help")
+    .setDescription("Affiche l'aide du bot, listant les commandes")
+
 const info = new SlashCommandBuilder()
     .setName("info")
     .setDescription("Les informations de Craftor3000's Eyes")
@@ -47,6 +51,7 @@ module.exports = {
     name: "ready",
     once: true,
     execute (Client) {
+        Client.guilds.cache.get("981985626868047942").commands.create(help);
         Client.guilds.cache.get("981985626868047942").commands.create(info);
         Client.guilds.cache.get("981985626868047942").commands.create(suppr);
         Client.guilds.cache.get("981985626868047942").commands.create(join);

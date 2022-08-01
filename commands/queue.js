@@ -11,13 +11,7 @@ module.exports = {
                 let reply = vars.get("musicQueue").toString().replace(",", "\n");
                 message.reply(reply);
             }
-            var user;
-            if(isInteraction){
-                user = message.user.username;
-            } else {
-                user = message.author.username;
-            }
-            console.log(user + " : Playlist : " + vars.get("musicQueue").length);
+            console.log(message.member.user.username + " : Playlist : " + vars.get("musicQueue").length);
         } else {
             message.reply("La playlist est vide");
         }

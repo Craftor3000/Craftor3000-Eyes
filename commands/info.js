@@ -9,12 +9,6 @@ module.exports = {
             .setTitle("Informations de Craftor3000's Eyes")
             .setDescription("**Autheur :** <@927990159495008266>\n**Version :** Bêta 1.0c")
         message.reply({allowedMentions: false, embeds: [embed]});
-        var user;
-        if(isInteraction){
-            user = message.user.username;
-        } else {
-            user = message.author.username;
-        }
-        console.log(user + " : Info");
+        console.log(message.member.user.username + " : Info");
     }
 }

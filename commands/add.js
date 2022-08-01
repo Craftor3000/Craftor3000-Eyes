@@ -9,15 +9,9 @@ module.exports = {
             if(args.length > 1){
                 let newMusic = args[1];
                 if(ytdl.validateURL(newMusic)){
-                    var user;
-                    if(isInteraction){
-                        user = message.user.username;
-                    } else {
-                        user = message.author.username;
-                    }
                     vars.get("musicQueue").push(newMusic);
                     message.reply(newMusic + " a été ajouté dans la playlist");
-                    console.log(user + " : Add : " + newMusic);
+                    console.log(message.member.user.username + " : Add : " + newMusic);
                 } else {
                     message.reply("URL invalide");
                 }

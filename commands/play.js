@@ -43,13 +43,7 @@ module.exports = {
                                 )
                             message.reply({content: "Voulez-vous reconnecter le bot dans le bon salon vocal ?", components: [row]});
                             vars.set("lastPlayerStream", args[1]);
-                            var user;
-                            if(isInteraction){
-                                user = message.user.username;
-                            } else {
-                                user = message.author.username;
-                            }
-                            console.log(user + " : Question : Rejoin : " + message.member.voice.channelId + " + Play : " + args[1]);
+                            console.log(message.member.user.username + " : Question : Rejoin : " + message.member.voice.channelId + " + Play : " + args[1]);
                         } else {
                             vars.get("connection").subscribe(vars.get("player"));
                             vars.get("player").play(resource);
@@ -63,13 +57,7 @@ module.exports = {
                                 musicSource = vars.get("musicQueue")[0];
                             }
                             message.reply("Lecture de l'audio dans le salon vocal");
-                            var user;
-                            if(isInteraction){
-                                user = message.user.username;
-                            } else {
-                                user = message.author.username;
-                            }
-                            console.log(user + " : Play : " + musicSource);
+                            console.log(message.member.user.username + " : Play : " + musicSource);
                         }
                     }
                 } else {

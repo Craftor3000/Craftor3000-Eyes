@@ -11,13 +11,7 @@ module.exports = {
                     vars.set("playerPause", true);
                     vars.set("audioPlaying", false);
                     message.reply("Le bot a été mis en pause");
-                    var user;
-                    if(isInteraction){
-                        user = message.user.username;
-                    } else {
-                        user = message.author.username;
-                    }
-                    console.log(user + " : Pause : " + vars.get("connectionChannelId"));
+                    console.log(message.member.user.username + " : Pause : " + vars.get("connectionChannelId"));
                 } else {
                     message.reply("Le bot est déjà en pause");
                 }                   

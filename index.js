@@ -6,7 +6,6 @@ const ytdl = require("ytdl-core");
 const { createAudioResource, AudioPlayerStatus } = require('@discordjs/voice');
 const { Player } = require("discord-player");
 const discordModals = require("discord-modals");
-const { channel } = require("diagnostics_channel");
 const Client = new Discord.Client({
     intents: [
         Discord.Intents.FLAGS.GUILDS,

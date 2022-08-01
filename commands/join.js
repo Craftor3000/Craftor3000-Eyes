@@ -16,13 +16,7 @@ module.exports = {
                     }));
                     vars.set("connectionChannelId", message.member.voice.channelId);
                     message.reply("Le bot viens de rejoindre votre salon vocal");
-                    var user;
-                    if(isInteraction){
-                        user = message.user.username;
-                    } else {
-                        user = message.author.username;
-                    }
-                    console.log(user + " : Join : " + vars.get("connectionChannelId"));
+                    console.log(message.member.user.username + " : Join : " + vars.get("connectionChannelId"));
                 } else {
                     if(vars.get("connectionChannelId") === message.member.voice.channelId){
                         message.reply("Le bot est déjà connecté à votre salon vocal");
@@ -34,13 +28,7 @@ module.exports = {
                         }));
                         vars.set("connectionChannelId", message.member.voice.channelId);
                         message.reply("Le bot viens de rejoindre votre salon vocal");
-                        var user;
-                        if(isInteraction){
-                            user = message.user.username;
-                        } else {
-                            user = message.author.username;
-                        }
-                        console.log(user + " : Rejoin : " + vars.get("connectionChannelId"));
+                        console.log(message.member.user.username + " : Rejoin : " + vars.get("connectionChannelId"));
                     }
                 }
             } else {
